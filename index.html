@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Send SMS via SIM800L</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    input, textarea, button { margin: 10px; padding: 10px; width: 300px; }
+    button { background: #0078D7; color: white; border: none; cursor: pointer; }
+    button:hover { background: #005a9e; }
+  </style>
+</head>
+<body>
+  <h1>Send SMS</h1>
+  <form id="smsForm">
+    <input type="text" id="phone" placeholder="Enter phone number" required><br>
+    <textarea id="message" placeholder="Enter message" rows="4" required></textarea><br>
+    <button type="submit">Send SMS</button>
+  </form>
+  <p id="status"></p>
+
+  <script>
+    const ARDUINO_IP = "http://192.168.1.50"; // Change to your Arduino’s IP
+
+    document.getElementById("smsForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const phone = document.getElementById("phone").value;
+      const message = document.getElementById("message").value;
+
+      document.getElementById("status").innerText = "Sending...";
+
+      try {
+        const res = await fetch(`${ARDUINO_IP}/send?phone=${encodeURIComponent(phone)}&msg=${encodeURIComponent(message)}`);
+        const text = await res.text();
+        document.getElementById("status").innerText = "Response: " + text;
+      } catch (err) {
+        document.getElementById("status").innerText = "Error: " + err;
+      }
+    });
+  </script>
+</body>
+</html>
